@@ -1,0 +1,60 @@
+#First upload two sets of genes to DAVID and analyze them seperatly, then upload the data to two txt files,
+#containing at least Category,Term,Fold enrichment, and Count. 
+#This function will compare two ".txt" files and will show which GO terms are in file1, and not in file2.
+#The function will return a plot containing: GO terms, -log10(Benjaminni)<0.05, Fold enrichment and count genes.
+#Please make sure you have all the following libraries installed. 
+#I wrote at the end an option to add title to the plot. 
+
+library("dplyr")
+library('ggplot2')
+library('egg')
+
+fun_in1_not_in2<-function(file1,file2){
+  
+  #Constracting the data#
+  file1.only<-anti_join(file1,file2,by='Term')
+  file1.only<-file1.only[file1.only$Benjamini<0.05,]
+  
+  file1.only<-file1.only %>% 
+    mutate(Category = substr(Category, 8,9),
+           Term = stringr::str_remove(Term, "(.*?)~"))
+  
+  file1.only$Term<-paste(file1.only$Term,file1.only$Category)
+  
+  file1.only1<-file1.only[,c("Term","Count","Fold.Enrichment","Benjamini")]
+  file1.only1$'-log10(Benjamini)'<--log10(file1.only1$Benjamini)
+  
+  #Visualizing the data#
+  names_Benj1<- ggplot(file1.only1, aes(x=reorder(Term,-log10(Benjamini)),
+                                        y=-log10(Benjamini)))+
+    geom_bar(position="dodge", stat="identity")+
+    coord_flip()
+  
+  Fold_En1<-ggplot(file1.only1, aes(x=reorder(Term,-log10(Benjamini)),
+                                    y=Fold.Enrichment))+
+    geom_bar(position="dodge", stat="identity")+
+    coord_flip()+
+    theme(axis.text.y=element_blank(),
+          axis.ticks.y=element_blank())+
+    xlab("")
+  
+  Count1<-ggplot(file1.only1, aes(x=reorder(Term,-log10(Benjamini)),
+                                  y=Count))+
+    geom_bar(position="dodge", stat="identity")+
+    coord_flip()+
+    theme(axis.text.y=element_blank(),
+          axis.ticks.y=element_blank())+
+    xlab("")
+  
+  figure<-ggarrange(names_Benj1, Fold_En1, Count1,
+                    ncol = 3, nrow = 1)
+  return(figure)  
+}
+
+file1<-read.delim('Bot_10%_genes.txt')
+file2<-read.delim('Mid_10%_116_genes.txt')
+
+dafun<-fun_in1_not_in2(file1,file2)
+annotate_figure(dafun, top=text_grob('Show GO terms in file 1 that not in file2.',face='bold',size=14))
+
+
