@@ -1,8 +1,8 @@
-#First upload two sets of genes to DAVID and analyze them seperatly, then upload the data to two txt files,
-#containing at least Category,Term,Fold enrichment, and Count. 
-#This function will compare two ".txt" files and will show which GO terms are in file1, and not in file2.
-#The function will return a plot containing: GO terms, -log10(Benjaminni)<0.05, Fold enrichment and count genes.
-#Please make sure you have all the following libraries installed. 
+#First upload set of genes to DAVID, after you 'submit list' -> 'Functional Annotation Chart'. then download the data to txt files.
+#The data should containing at least Category,Term,Fold enrichment and Count.
+#Do it to two gene set you want to compare.
+#This function will return the segnificant GO terms (Benjamini<0.05), Fold enrichment, and gene count. That are in file1 AND NOT in file2!
+#The code will returm you a plot.
 #I wrote at the end an option to add title to the plot. 
 
 library("dplyr")
@@ -51,10 +51,12 @@ fun_in1_not_in2<-function(file1,file2){
   return(figure)  
 }
 
-file1<-read.delim('Bot_10%_genes.txt')
-file2<-read.delim('Mid_10%_116_genes.txt')
+file1<-read.delim('110_genes.txt')
+file2<-read.delim('diffrent_110_genes.txt')
 
 dafun<-fun_in1_not_in2(file1,file2)
+
+#Optional to have a title for your plot
 annotate_figure(dafun, top=text_grob('Show GO terms in file 1 that not in file2.',face='bold',size=14))
 
 
