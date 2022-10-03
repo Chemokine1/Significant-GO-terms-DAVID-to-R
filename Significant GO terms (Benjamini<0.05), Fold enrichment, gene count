@@ -1,0 +1,56 @@
+#First upload set of genes to DAVID, after you 'submit list' -> 'Functional Annotation Chart'. then download the data to txt files.
+#The data should containing at least Category,Term,Fold enrichment and Count. 
+#This function will return the segnificant GO terms (Benjamini<0.05), Fold enrichment, and gene count.
+#The code will returm you a plot.
+
+Significant_GO_terms<-function(file){
+  
+  #Constructing the data#
+  file <-file %>% 
+    mutate(Category = substr(Category, 8,9),
+           Term = stringr::str_remove(Term, "(.*?)~"))
+  
+  file$Term<-paste(file$Term,file$Category)
+  
+  file<-file[file$Benjamini<0.05,]
+  
+  file$'-log10(Benj)'<--log10(file$Benjamini)
+  
+  file<-file[,c("Term","Count","Fold.Enrichment","Benjamini")]
+  
+  colnames(file)<-c('Term','Count','Fold.ERC','-log10(Benj)')
+  
+  #Visulaize the data#
+  names_Benj<- ggplot(file, aes(x=reorder(Term,`-log10(Benj)`),
+                                 y=`-log10(Benj)`))+
+    geom_bar(position="dodge", stat="identity")+
+    coord_flip()+
+    xlab('Significant GO terms')
+  
+  Fold_En<-ggplot(file, aes(x=reorder(Term,`-log10(Benj)`),
+                             y=Fold.ERC))+
+    geom_bar(position="dodge", stat="identity")+
+    coord_flip()+
+    theme(axis.text.y=element_blank(),
+          axis.ticks.y=element_blank())+
+    xlab("")
+  
+  Count<-ggplot(file, aes(x=reorder(Term,`-log10(Benj)`),
+                           y=Count))+
+    geom_bar(position="dodge", stat="identity")+
+    coord_flip()+
+    theme(axis.text.y=element_blank(),
+          axis.ticks.y=element_blank())+
+    xlab("")
+  
+  figure2<- ggarrange(names_Benj, Fold_En, Count,
+                      ncol = 3, nrow = 1)
+  return(figure2)
+}
+
+file<-read.delim('Homologus_recombination_115_genes.txt')
+dafun<-Significant_GO_terms(file)
+
+#Optional to have a title for your plot
+annotate_figure(dafun, top=text_grob('Homologus recombination Sig GO terms',face='bold',size=14))
+
