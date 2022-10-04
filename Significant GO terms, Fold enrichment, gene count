@@ -3,6 +3,10 @@
 #This function will return the segnificant GO terms (Benjamini<0.05), Fold enrichment, and gene count.
 #The code will returm you a plot.
 
+library("dplyr")
+library('ggplot2')
+library('egg')
+
 Significant_GO_terms<-function(file){
   
   #Constructing the data#
