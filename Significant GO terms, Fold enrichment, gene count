@@ -20,7 +20,7 @@ Significant_GO_terms<-function(file){
   
   file$'-log10(Benj)'<--log10(file$Benjamini)
   
-  file<-file[,c("Term","Count","Fold.Enrichment","Benjamini")]
+  file<-file[,c("Term","Count","Fold.Enrichment","-log10(Benj)")]
   
   colnames(file)<-c('Term','Count','Fold.ERC','-log10(Benj)')
   
