@@ -1,5 +1,8 @@
-#file1 = txt file contain GO terms you are intrest
-#file 2 = diffrent txt file contain GO terms you are intrest
+#This function will return you a plot contain shared GO terms of 2 files that went through anti-join (withdrow) of unrelevent GO terms. 
+#On line 76 you have the option to export your data to on excel file
+
+#file1 = txt file contain GO terms you are intrested in
+#file 2 = diffrent txt file contain GO terms you are intrested in
 #file 3 = txt file contain GO terms you want to withdraw form file 1
 #file 4 = txt file contain GO terms you want to withdraw form file 2
 
@@ -123,30 +126,4 @@ Shared_GO_terms_2files_with_anti_join<-function(file1,file2,file3,file4){
   figure<-ggarrange(ERC, Count,Benj,
                     ncol = 1, nrow = 3)
   return(figure)
-  
 }
-
-
-file1<-read.delim('110_genes.txt')
-file2<-read.delim('diffrent_110_genes.txt')
-
-dafun<-fun_in1_not_in2(file1,file2)
-
-#Optional to have a title for your plot
-annotate_figure(dafun, top=text_grob('Show GO terms in file 1 that not in file2.',face='bold',size=14))
-#annotate_figure(dafun, top=text_grob('Homologus recombination Sig GO terms',face='bold',size=14))
-
-# Compare top
-figure<-Shared_GO_terms_2files(Short_top,Long_top)
-annotate_figure(figure, top=text_grob('file 1: Short top genes, file 2: long top genes.
-Shared significant GO terms between the groups',face='bold',size=16))
-
-# Compare bot
-figure<-Shared_GO_terms_2files(Short_bot,Long_bot)
-annotate_figure(figure, top=text_grob('file 1: Short bot genes, file 2: long bot genes.
-Shared significant GO terms between the groups',face='bold',size=16))
-
-#c Compare mid
-figure<-Shared_GO_terms_2files(Short_top,Long_top)
-annotate_figure(figure, top=text_grob('file 1: Short top genes, file 2: Long top genes.
-Shared significant GO terms between the groups',face='bold',size=16))
